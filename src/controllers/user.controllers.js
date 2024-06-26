@@ -1,9 +1,11 @@
 const catchError = require('../utils/catchError');
 const User = require('../models/User');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const getAll = catchError(async(req, res) => {
     const results = await User.findAll();
-    return res.json(results);
+    return res.status(200).json(results);
 });
 
 const create = catchError(async(req, res) => {
@@ -28,10 +30,10 @@ const remove = catchError(async(req, res) => {
 const update = catchError(async(req, res) => {
     
     //Avoiding password and email to be updated
-    /*
+    
     const removeFields=[password, email]
-    removeFields.forEach((field) => delete req.body)
-    */
+    removeFields.forEach((field) => delete req.body[field]);
+    
    
     const { id } = req.params;
     const result = await User.update(
@@ -42,10 +44,26 @@ const update = catchError(async(req, res) => {
     return res.json(result[1][0]);
 });
 
+const login = catchError(async (req, res) => {
+    const { email, password } = req.body
+    const user = await User.findOne({ where: { email } })
+    if (!user) return res.sendStatus(401).json({ error: 'Invalid Entry' })
+        
+
+    const isValid = await bcrypt.compare(password, user.password)
+    if (!isValid) return res.status(401).json({ error: 'Invalid Entry' })
+
+    const token = jwt.sign(
+        { user }, process.env.TOKEN_SECRET, { expiresIn: '1d' }
+    )
+    return res.status(200).json({ user, token })
+})
+
 module.exports = {
     getAll,
     create,
     getOne,
     remove,
-    update
+    update,
+    login
 }

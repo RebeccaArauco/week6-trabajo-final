@@ -26,7 +26,7 @@ test("POST -> 'BASE_URL', should return statusCode 201, and res.body.firstName =
 })
 
 
-test("GET -> 'BASE_URL' should return res status code 200 , res.body[0].firstName === user.firstName and res.body.length = 1", async () => {
+test("GET -> 'BASE_URL' should return res status code 200 , res.body[0].firstName === user.firstName and res.body.length = 2", async () => {
 
   const res = await request(app)
     .get(BASE_URL)
