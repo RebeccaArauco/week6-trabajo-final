@@ -13,12 +13,7 @@ const create = catchError(async(req, res) => {
     return res.status(201).json(result);
 });
 
-const getOne = catchError(async(req, res) => {
-    const { id } = req.params;
-    const result = await User.findByPk(id);
-    if(!result) return res.sendStatus(404);
-    return res.json(result);
-});
+
 
 const remove = catchError(async(req, res) => {
     const { id } = req.params;
@@ -29,9 +24,9 @@ const remove = catchError(async(req, res) => {
 
 const update = catchError(async(req, res) => {
     
-    //Avoiding password and email to be updated
+    //Removing Fields
     
-    const removeFields=[password, email]
+    const removeFields=['password', 'email']
     removeFields.forEach((field) => delete req.body[field]);
     
    
@@ -47,11 +42,11 @@ const update = catchError(async(req, res) => {
 const login = catchError(async (req, res) => {
     const { email, password } = req.body
     const user = await User.findOne({ where: { email } })
-    if (!user) return res.sendStatus(401).json({ error: 'Invalid Entry' })
+    if (!user) return res.sendStatus(401).json({ error: 'Invalid insert' })
         
 
     const isValid = await bcrypt.compare(password, user.password)
-    if (!isValid) return res.status(401).json({ error: 'Invalid Entry' })
+    if (!isValid) return res.status(401).json({ error: 'Invalid insert' })
 
     const token = jwt.sign(
         { user }, process.env.TOKEN_SECRET, { expiresIn: '1d' }
@@ -62,7 +57,6 @@ const login = catchError(async (req, res) => {
 module.exports = {
     getAll,
     create,
-    getOne,
     remove,
     update,
     login

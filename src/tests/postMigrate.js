@@ -1,13 +1,10 @@
 require('../models')
 const sequelize = require('../utils/connection');
-const user = require('./createData/user');
 
 const testMigrate = async () => {
   try {
     await sequelize.sync({ force: true });
-    console.log("DB reset 💪🏻😎");
-
-    await user()
+    console.log("DB clear 🧹✅");
 
     process.exit()
   } catch (error) {

@@ -1,7 +1,7 @@
 const User = require("../../models/User")
 
 const user = async() => {
-    const user = {
+    const body = {
         firstName: "Josephine",
         lastName: "March",
         email: "josephine@gmail.com",
