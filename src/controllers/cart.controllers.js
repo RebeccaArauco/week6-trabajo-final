@@ -1,54 +1,59 @@
 const catchError = require('../utils/catchError');
+const Cart = require('../models/Cart');
 const Product = require('../models/Product');
-const Category = require('../models/Category');
+const User = require('../models/User');
 
 const getAll = catchError(async(req, res) => {
-    const results = await Product.findAll({include: [Category]});
+    const results = await Cart.findAll({include: [Product, User]});
     return res.json(results);
 });
 
 const create = catchError(async(req, res) => {
-    const result = await Product.create(req.body);
+    const {quantity, productId}= req.body
+    const userId =req.user.id
+
+    const body = {userId, quantity, productId}
+    const result = await Cart.create(body);
     return res.status(201).json(result);
 });
 
 const getOne = catchError(async(req, res) => {
     const { id } = req.params;
-    const result = await Product.findByPk(id);
+    const result = await Cart.findByPk(id, {include: [Product, User]});
     if(!result) return res.sendStatus(404);
     return res.json(result);
 });
 
 const remove = catchError(async(req, res) => {
+
     const { id } = req.params;
-    const result = await Product.destroy({ where: {id} });
-    if(!result) return res.sendStatus(404);
+    const result = await Cart.destroy({ 
+        where: {
+            id,
+            userId: req.user.id,
+        } });
+    
+    if(!result) return res.sendStatus(404);    
     return res.sendStatus(204);
 });
 
 const update = catchError(async(req, res) => {
+    const userId = req.user.id
+
     const { id } = req.params;
-    const result = await Product.update(
-        req.body,
-        { where: {id}, returning: true }
+    const {quantity} = req.body
+    const result = await Cart.update(
+        {quantity},
+        { where: {id, userId}, returning: true }
     );
     if(result[0] === 0) return res.sendStatus(404);
     return res.json(result[1][0]);
 });
-
-const setImages = catchError(async(req, res) => {
-    const {id} = req.params
-    const product = await Product.findByPk(id) 
-    await product.setImages(req.body)        
-    const images = await product.getImages() 
-    return res.json(images)
-})
 
 module.exports = {
     getAll,
     create,
     getOne,
     remove,
-    update,
-    setImages
+    update
 }
