@@ -1,19 +1,19 @@
-const { verify } = require('jsonwebtoken');
-const { getAll, create, getOne, remove, update, setImages } = require('../controllers/product.controllers');
+const { getAll, create, getOne, remove, update, /*setImages*/ } = require('../controllers/product.controllers');
 const express = require('express');
+const { verifyJwt } = require('../utils/verifyJWT');
 
 const routerProduct = express.Router();
 
 routerProduct.route('/')
     .get(getAll)
-    .post(verify, create);
+    .post(verifyJwt, create);
 /*
 routerUser.route('/:id/images')
     .post(verify, setImages)*/
 
 routerProduct.route('/:id')
     .get(getOne)
-    .delete(verify, remove)
-    .put(verify, update);
+    .delete(verifyJwt, remove)
+    .put(verifyJwt, update);
 
 module.exports = routerProduct;
