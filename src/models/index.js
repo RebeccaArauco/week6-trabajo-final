@@ -16,6 +16,11 @@ User.hasMany(Cart)
 Cart.belongsTo(Product)
 Product.hasMany(Cart)
 
+//Purchase - User relation
+Purchase.belongsTo(User)
+User.hasMany(Purchase)
+
 //Purchase - Product relation
-Purchase.hasMany(Product)
-Product.belongsTo(Purchase)
+Purchase.belongsTo(Product)
+Product.hasMany(Purchase)
+
