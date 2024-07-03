@@ -10,10 +10,8 @@ const getAll = catchError(async(req, res) => {
 
 const create = catchError(async(req, res) => {
 
-
     const {filename} = req.file
-    const imageDB = await ProductImg.findOne({where: {
-        filename}})
+    const imageDB = await ProductImg.findOne({where: {filename}})
         if (imageDB) return res.sendStatus(404)
 
     const url = `${req.protocol}://${req.headers.host}/uploads/${filename}`
@@ -27,6 +25,7 @@ const remove = catchError(async(req, res) => {
 
     const result = await ProductImg.findByPk(id)
     if(!result) return res.sendStatus(404)
+        console.log(__dirname)
    
     const imageFilePath = path.join(__dirname, '..', 'public', 'uploads', result.filename)
     fs.unlinkSync(imageFilePath)
